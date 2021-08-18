@@ -29,6 +29,9 @@ import numpy as np
 
 # Vertical and constant temperature gradient [K/m]
 temp_grad = -6.5e-3
+# Upper altitude limit temperature
+min_temp = 200.
+
 # Surface conditions
 # Temperature in [K]
 surf_temp = 290.
@@ -36,8 +39,15 @@ surf_temp = 290.
 surf_pres = 102000.
 # Surface elevation in [m] above the sea level
 surf_alt = 0.
-# Upper altitude conditions
-min_temp = 200.
+
+# Location
+# Latitude where the LTB is located, in [degrees North]
+lat = 50.
+# Longitude where the LTB is located, in [degrees East]
+lon = 100.
+# Days of interest to plot the daily shadows at the surface,
+# by default the 2020 solstices and the spring equinox
+n_days = ['20200321','20200621','20201221']
 
 
 ###########  b) Light Tower of Babel hypotheses  ############
@@ -70,11 +80,11 @@ z_tower = 15000.
 dens_surf_mod = 20.
 
 # Part 4, PV panel at the top of the tower
-# Depth, this dimension will go from horizontal to vertical
+# Length, this dimension always stays horizontal
+x_pv = 2000.
+# Width, this dimension will go from horizontal to vertical
 # on a daily basis once deployed
-x_pv = 500.
-# Width, this dimension always stays horizontal
-y_pv = 2000.
+y_pv = 500.
 # Effective conversion rate of solar radiative flux to electricity, in [%]
 conv_rate_pv = 20.
 # Average hours per day of full exposure of the PV panel to solar flux

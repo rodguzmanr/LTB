@@ -13,7 +13,7 @@ May 2021, v0 by Rodrigo Guzman
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
+import numpy.ma as ma
 
 import constants as cst
 import variables as var
@@ -155,8 +155,9 @@ if __name__ == "__main__":
     # Computing energy production for a full year
     year_energy_prod = day_energy_prod*365
 
+    
     #######################################################################
-    #########  VI - Displaying main results from the simulation   #########
+    #########  VI - Displaying main results from the simulation  ##########
     #######################################################################
 
     print('\n*** Main results from this simulation ***\n')
@@ -185,44 +186,14 @@ if __name__ == "__main__":
     print('day_energy_prod = '+str(day_energy_prod/1e9)+' [GWh/day]')
     print('year_energy_prod = '+str(year_energy_prod/1e12)+' [TWh/year]\n')   
 
+
+    ########################################
+    ############  VII - Plots  #############
+    ########################################
     
-    ####################################
-    ##############  Plots  #############
-    ####################################
-    
-    fig = plt.figure(figsize=(8, 6))
+    # Ploting Atmospheric and LTB profiles
+    func.plot_profiles(pres, alt, nb_cube_mod, temp, d_mod, d_mod_cone)
 
-    # Top left subplot 
-    plt.subplot(2, 2, 1)
-    plt.plot(pres, alt, color='blue')
-    plt.title('Atmospheric pressure')
-    plt.ylabel('Altitude [m]')
-    plt.xlabel('Pressure [Pa]')
-
-    # Top right subplot 
-    plt.subplot(2, 2, 2)
-    plt.plot(nb_cube_mod, alt, color='black')
-    plt.title('Number of casings per module')
-    plt.ylabel('Altitude [m]')
-    plt.xlabel('Nb casings [no unit]')
-    
-    # Bottom left subplot
-    plt.subplot(2, 2, 3)
-    plt.plot(temp, alt, color='red')
-    plt.title('Atmospheric temperature')
-    plt.ylabel('Altitude [m]')
-    plt.xlabel('Temperature [K]')
-
-    # Bottom right subplot 
-    plt.subplot(2, 2, 4)
-    plt.plot(d_mod, alt, color='black', label='cylindrical modules tower')
-    plt.plot(d_mod_cone, alt, color='green', label='cone tower')
-    plt.title('Tower diameter')
-    plt.ylabel('Altitude [m]')
-    plt.xlabel('Diameter [m]')
-    plt.legend(fontsize=9)
-
-    plt.tight_layout()
-    # Save figure
-    plt.savefig('profiles_LTB_simple_model.png')
+    # Ploting surface shadows caused by the LTB
+    func.plot_shadows(var.lat, var.lon, var.n_days, var.x_pv, var.y_pv, var.z_tower)
     
