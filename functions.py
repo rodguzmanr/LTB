@@ -18,7 +18,6 @@ import numpy as np
 import numpy.ma as ma
 import matplotlib.pyplot as plt
 import datetime as dt
-import pandas as pd
 import pysolar.solar as pysol
 
 import constants as cst
@@ -187,8 +186,8 @@ def plot_profiles(pres, alt, nb_cube_mod, temp, d_mod, d_mod_cone):
     plt.ylabel('Altitude [m]')
     plt.xlabel('Diameter [m]')
     plt.legend(fontsize=9)
-
     plt.tight_layout()
+    
     # Save figure
     plt.savefig('profiles_LTB_simple_model.png')
 
@@ -219,22 +218,30 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
     """
     
     # Defining coordinate matrices for the days to be plotted
-#    x_box_centers = np.ones((len(n_days),24))*-9999
-#    y_box_centers = np.ones((len(n_days),24))*-9999
+    x_box_centers = np.ones((len(n_days),24))*np.nan
+    y_box_centers = np.ones((len(n_days),24))*np.nan
+    # Maximum value for plots
+    max_val = 999999
+    # Defining variable to switch from one hemisphere to the other
+    lat_sign = 1.
+    if lat < 0:
+        lat_sign = -1.
     
     # Creating figure
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6, 6))
 
     # Loop over the number of days in n_days
     for i in np.arange(len(n_days)):
-        # Loop over the 24 hours of the day
+        # Initializing daily counter
+        k = 0
+        # Loop over the 24 hours of the day      
         for j in np.arange(24):
             # Defining the datetime object at local hour j at the
-            # location corresponding to the given longitude
+            # geographical location corresponding to the given longitude
             date = dt.datetime(int(n_days[i][0:4]), int(n_days[i][4:6]), int(n_days[i][6:8]), j, tzinfo=dt.timezone(offset=dt.timedelta(hours=int(lon/15))))
             # Getting the Solar Zenithal Angle
             sza = pysol.get_altitude(lat, lon, date)
-            # Computation keeps going if the sun is above the horizon
+            # Computation performed if the sun is above the horizon
             if sza > 0:
                 # Getting the Solar Azimuth Angle
                 saa = pysol.get_azimuth(lat, lon, date)
@@ -257,36 +264,51 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
                 x_box_ll = x_box_center + (x_shadow/2.)*(np.cos((2*np.pi/360.)*saa)) + (y_shadow/2.)*(np.sin((2*np.pi/360.)*saa))
                 y_box_ll = y_box_center + (x_shadow/2.)*(-np.sin((2*np.pi/360.)*saa)) + (y_shadow/2.)*(np.cos((2*np.pi/360.)*saa))
 
-                # We save the box center coordinates to plot them
-#                x_box_centers[i, j] = x_box_center
-#                y_box_centers[i, j] = y_box_center
-                
-                rect = plt.Rectangle((x_box_ll, y_box_ll), x_shadow, y_shadow, angle=(180-saa), facecolor="black", alpha=0.8)
-                ax.add_patch(rect)
+                # We save the box center coordinates to plot
+                # each day's surface shadow trajectory
+                if k == 0:
+                    x_box_centers[i, :] = x_box_center
+                    y_box_centers[i, :] = y_box_center
+                    k = 1
+                else:
+                    x_box_centers[i, j:] = x_box_center
+                    y_box_centers[i, j:] = y_box_center
 
-    # Masking useless elements of the coordinate matrix
-#    x_box_centers = ma.masked_where(x_box_centers <= -9999., x_box_centers)
-#    y_box_centers = ma.masked_where(y_box_centers <= -9999., y_box_centers)
+                if i==0 and k==1:
+                    rect = plt.Rectangle((x_box_ll, y_box_ll), x_shadow, y_shadow, angle=(180-saa), facecolor="black", alpha=0.8, label="Instantaneous hourly\nsurface shadows")
+                    ax.add_patch(rect)
+                    k = 2
+                else:
+                    rect = plt.Rectangle((x_box_ll, y_box_ll), x_shadow, y_shadow, angle=(180-saa), facecolor="black", alpha=0.8)
+                    ax.add_patch(rect)
 
-#    for i in np.arange(len(n_days)):
-        # Plotting each day's surface shadow trajectory
-#        ax.plot(x_box_centers[i, :], y_box_centers[i, :], label=n_days[i], lw=1.5)
+    # Plotting each day's surface shadow trajectory
+    for i in np.arange(len(n_days)):
+        ax.plot(x_box_centers[i, :], y_box_centers[i, :], label=n_days[i], lw=0.6)
 
-    # LTB position at the ground, try scatterplot
-    ax.plot(np.zeros(2), np.zeros(2), '-o', color='blue', label='LTB', lw=3)
+    # Filling the shadow zone only when abs(lat) less than 66 deg
+    if np.abs(lat) < 66:
+        ax.fill_between(x_box_centers[0, :], y_box_centers[0, :], np.ones(len(x_box_centers[0,:]))*max_val*lat_sign, color="grey", alpha=0.6, label="Yearly surface\nshadow zone")
+        # Limiting the shadow zone polewards
+        ax.fill_between(x_box_centers[-1, :], y_box_centers[-1, :], np.ones(len(x_box_centers[-1,:]))*max_val*lat_sign, color="white", alpha=1)
+    # LTB position at the ground
+    ax.scatter(np.zeros(1), np.zeros(1), color='red', marker=".", label='LTB', lw=0.2)
     
     # Reference surface at the ground
-    rect = plt.Rectangle((-1000, -20000), 2000, 500, facecolor="black")
+    rect = plt.Rectangle((-1000, -20000*lat_sign), 2000, 500, facecolor="black")
     ax.add_patch(rect)
-    ax.text(-3000, -24000, '2000 m', fontsize=6)
-    ax.text(-8000, -20000, '500 m', fontsize=6)
+    ax.text(-3000, -23000*lat_sign, '2000 m', fontsize=6)
+    ax.text(-9000, -20000*lat_sign, '500 m', fontsize=6)
 
-    ax.set_title('Hourly surface shadows')
-#    ax.plot([-500, 500], [-20000, -20000], color="black", lw=3)
+    ax.set_title('Surface shadows, lat = '+str(lat)+' N' )
 
-    plt.xlim(-70000,70000)
-    plt.ylim(-30000,100000)
-    plt.legend()
+    # Orthonormal axes
+    plt.xlim(-50000,50000)
+    plt.ylim(-40000,60000)
+    plt.xlabel("Eastward distance with respect to LTB [m]")
+    plt.ylabel("Northward distance with respect to LTB [m]")
+    plt.legend(fontsize=8)
     plt.tight_layout()
+    
     # Save figure
     plt.savefig('shadows_LTB_simple_model.png')

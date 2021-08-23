@@ -42,12 +42,14 @@ surf_alt = 0.
 
 # Location
 # Latitude where the LTB is located, in [degrees North]
-lat = 50.
+lat = 40.
 # Longitude where the LTB is located, in [degrees East]
 lon = 100.
 # Days of interest to plot the daily shadows at the surface,
-# by default the 2020 solstices and the spring equinox
-n_days = ['20200321','20200621','20201221']
+# by default the 2020 solstices and the fall equinox.
+# Days must be sorted by dates, the closest one to the summer
+# solstice first, to the closest one to the winter solstice.
+n_days = ['20200621','20200921','20201221']
 
 
 ###########  b) Light Tower of Babel hypotheses  ############
