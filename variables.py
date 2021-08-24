@@ -47,8 +47,9 @@ lat = 40.
 lon = 100.
 # Days of interest to plot the daily shadows at the surface,
 # by default the 2020 solstices and the fall equinox.
-# Days must be sorted by dates, the closest one to the summer
-# solstice first, to the closest one to the winter solstice.
+# Days must be sorted by dates, the first day has to be the
+# summer solstice, the last one the winter solstice.
+# Any day in between these 2 compulsory days can be added.
 n_days = ['20200621','20200921','20201221']
 
 
