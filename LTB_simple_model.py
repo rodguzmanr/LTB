@@ -197,3 +197,5 @@ if __name__ == "__main__":
     # Ploting surface shadows caused by the LTB
     func.plot_shadows(var.lat, var.lon, var.n_days, var.x_pv, var.y_pv, var.z_tower)
     
+    # Ploting idealized daily production for the 2 solstices
+    func.plot_daily_prod(var.lat, var.lon, var.n_days, max_power)

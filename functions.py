@@ -312,3 +312,65 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
     
     # Save figure
     plt.savefig('shadows_LTB_simple_model.png')
+
+
+def plot_daily_prod(lat, lon, n_days, max_power):
+    """Function to plot the idealized daily power production.
+
+    Parameters
+    ----------   
+    lat : float
+        Latitude where the LTB is located, in [degrees North].
+
+    lon : float
+        Longitude where the LTB is located, in [degrees East].
+
+    n_days : list (Python object)
+        List of days for which we wish to plot the surface shadows at every hour of the day, expected string format for each day [yyyymmdd].
+
+    max_power : float
+        Maximum power produced by the structure, in [W].
+
+    """
+
+    # Defining hourly 2-day matrices
+    daytime_flag = np.zeros((2,24))
+    hour_power = np.zeros((2,24))
+
+    # Only the 2 solstices are ploted, first and last elements of n_days
+    for i in [0, -1]:
+        # Loop over the 24 hours of the day
+        for j in np.arange(24):
+            # Defining the datetime object at local hour j at the
+            # geographical location corresponding to the given longitude
+            date = dt.datetime(int(n_days[i][0:4]), int(n_days[i][4:6]), int(n_days[i][6:8]), j, tzinfo=dt.timezone(offset=dt.timedelta(hours=int(lon/15))))
+            # Getting the Solar Zenithal Angle
+            sza = pysol.get_altitude(lat, lon, date)
+            # If the sun is above the horizon, daytime_flag = 1
+            if sza > 0:
+                daytime_flag[i, j] = 1
+    # Computing idealized daily power for the 2 days, in MW
+    hour_power = daytime_flag*max_power/1e6
+
+    fig = plt.figure(figsize=(8, 4))
+    plt.suptitle('Maximum and minimum daily energy production, lat = '+str(lat)+' N', fontsize=14)
+
+    # Left subplot 
+    plt.subplot(1, 2, 1)
+    plt.plot(np.arange(24), hour_power[0, :], color='red', label='Total daily energy\nproduction = '+str(np.sum(daytime_flag[0, :])*max_power/1e9)+' GWh')
+    plt.title('Summer solstice power production')
+    plt.ylabel('Power [MW]')
+    plt.xlabel('Solar hour [no unit]')
+    plt.legend(loc='center left', fontsize=9)
+
+    # Right subplot
+    plt.subplot(1, 2, 2)
+    plt.plot(np.arange(24), hour_power[-1, :], color='blue', label='Total daily energy\nproduction = '+str(np.sum(daytime_flag[-1, :])*max_power/1e9)+' GWh')
+    plt.title('Winter solstice power production')
+    plt.ylabel('Power [MW]')
+    plt.xlabel('Solar hour [no unit]')
+    plt.legend(loc='center left', fontsize=9)
+    plt.tight_layout()
+
+    # Save figure
+    plt.savefig('daily_prod_LTB_simple_model.png')
