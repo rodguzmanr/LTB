@@ -363,7 +363,7 @@ def plot_daily_prod(lat, lon, n_days, max_power):
     # Left subplot 
     plt.subplot(1, 2, 1)
     plt.plot(np.arange(24), hour_power[0, :], color='red', label='Total daily energy\nproduction = '+str(np.sum(daytime_flag[0, :])*max_power/1e9)+' GWh')
-    plt.title('Summer solstice power production')
+    plt.title('a) Summer solstice power production')
     plt.ylabel('Power [MW]')
     plt.xlabel('Solar hour [no unit]')
     plt.legend(loc='center left', fontsize=9)
@@ -371,7 +371,7 @@ def plot_daily_prod(lat, lon, n_days, max_power):
     # Right subplot
     plt.subplot(1, 2, 2)
     plt.plot(np.arange(24), hour_power[-1, :], color='blue', label='Total daily energy\nproduction = '+str(np.sum(daytime_flag[-1, :])*max_power/1e9)+' GWh')
-    plt.title('Winter solstice power production')
+    plt.title('b) Winter solstice power production')
     plt.ylabel('Power [MW]')
     plt.xlabel('Solar hour [no unit]')
     plt.legend(loc='center left', fontsize=9)
