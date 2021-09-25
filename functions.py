@@ -15,7 +15,6 @@ May 2021, v0 by Rodrigo Guzman
 """
 
 import numpy as np
-import numpy.ma as ma
 import matplotlib.pyplot as plt
 import datetime as dt
 import pysolar.solar as pysol
@@ -130,7 +129,7 @@ def mass_from_ideal_gas(pres, vol, mol_mass, temp):
     return mass
 
 
-def plot_profiles(pres, alt, nb_cube_mod, temp, d_mod, d_mod_cone):
+def plot_profiles(pres, alt, nb_cube_mod, temp, d_mod, d_mod_cone, nb_cube_tower):
     """Function to plot the atmospheric and LTB profiles.
 
     Parameters
@@ -153,43 +152,48 @@ def plot_profiles(pres, alt, nb_cube_mod, temp, d_mod, d_mod_cone):
     d_mod_cone : array (Numpy object)
         Modules' diameter for a (upside down) conical LTB (from the surface to the tropopause), no unit.
 
+    nb_cube_tower : float
+        Total number of cubic casings within the tower, no unit.
+
     """
 
     fig = plt.figure(figsize=(8, 6))
-
+    plt.suptitle('Figure 1: Idealized atmosphere and LTB profiles', fontsize=14)
+    
     # Top left subplot 
     plt.subplot(2, 2, 1)
     plt.plot(pres, alt, color='blue')
-    plt.title('Atmospheric pressure')
+    plt.title('a) Atmospheric pressure')
     plt.ylabel('Altitude [m]')
     plt.xlabel('Pressure [Pa]')
 
     # Top right subplot 
     plt.subplot(2, 2, 2)
     plt.plot(nb_cube_mod, alt, color='black')
-    plt.title('Number of casings per module')
+    plt.title('b) Number of casings per module')
+    plt.text(nb_cube_mod[-1]*0.5, alt[0]+1000, 'Total number of\ncasings within the\ntower : '+str(nb_cube_tower), fontsize=10)
     plt.ylabel('Altitude [m]')
     plt.xlabel('Nb casings [no unit]')
     
     # Bottom left subplot
     plt.subplot(2, 2, 3)
     plt.plot(temp, alt, color='red')
-    plt.title('Atmospheric temperature')
+    plt.title('c) Atmospheric temperature')
     plt.ylabel('Altitude [m]')
     plt.xlabel('Temperature [K]')
 
     # Bottom right subplot 
     plt.subplot(2, 2, 4)
     plt.plot(d_mod, alt, color='black', label='cylindrical modules tower')
-    plt.plot(d_mod_cone, alt, color='green', label='cone tower')
-    plt.title('Tower diameter')
+    plt.plot(d_mod_cone, alt, color='green', label='conical tower')
+    plt.title('d) Tower diameter')
     plt.ylabel('Altitude [m]')
     plt.xlabel('Diameter [m]')
     plt.legend(fontsize=9)
     plt.tight_layout()
     
     # Save figure
-    plt.savefig('profiles_LTB_simple_model.png')
+    plt.savefig('Fig1_profiles_LTB_simple_model.png')
 
 
 def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
@@ -229,7 +233,8 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
     
     # Creating figure
     fig, ax = plt.subplots(figsize=(6, 6))
-
+    plt.suptitle('Figure 2: Surface shadows in the surrounding LTB area\ncaused by the PV panel array in clear-sky conditions', fontsize=14)
+    
     # Loop over the number of days in n_days
     for i in np.arange(len(n_days)):
         # Initializing daily counter
@@ -300,7 +305,7 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
     ax.text(-3000, -23000*lat_sign, '2000 m', fontsize=6)
     ax.text(-9000, -20000*lat_sign, '500 m', fontsize=6)
 
-    ax.set_title('Surface shadows, lat = '+str(lat)+' N' )
+    ax.set_title('lat = '+str(lat)+' N' )
 
     # Orthonormal axes
     plt.xlim(-50000,50000)
@@ -311,4 +316,66 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
     plt.tight_layout()
     
     # Save figure
-    plt.savefig('shadows_LTB_simple_model.png')
+    plt.savefig('Fig2_shadows_LTB_simple_model.png')
+
+
+def plot_daily_prod(lat, lon, n_days, max_power):
+    """Function to plot the idealized daily power production.
+
+    Parameters
+    ----------   
+    lat : float
+        Latitude where the LTB is located, in [degrees North].
+
+    lon : float
+        Longitude where the LTB is located, in [degrees East].
+
+    n_days : list (Python object)
+        List of days for which we wish to plot the surface shadows at every hour of the day, expected string format for each day [yyyymmdd].
+
+    max_power : float
+        Maximum power produced by the structure, in [W].
+
+    """
+
+    # Defining hourly 2-day matrices
+    daytime_flag = np.zeros((2,24))
+    hour_power = np.zeros((2,24))
+
+    # Only the 2 solstices are ploted, first and last elements of n_days
+    for i in [0, -1]:
+        # Loop over the 24 hours of the day
+        for j in np.arange(24):
+            # Defining the datetime object at local hour j at the
+            # geographical location corresponding to the given longitude
+            date = dt.datetime(int(n_days[i][0:4]), int(n_days[i][4:6]), int(n_days[i][6:8]), j, tzinfo=dt.timezone(offset=dt.timedelta(hours=int(lon/15))))
+            # Getting the Solar Zenithal Angle
+            sza = pysol.get_altitude(lat, lon, date)
+            # If the sun is above the horizon, daytime_flag = 1
+            if sza > 0:
+                daytime_flag[i, j] = 1
+    # Computing idealized daily power for the 2 days, in MW
+    hour_power = daytime_flag*max_power/1e6
+
+    fig = plt.figure(figsize=(8, 4))
+    plt.suptitle('Figure 3: Maximum and minimum daily energy production, lat = '+str(lat)+' N', fontsize=14)
+
+    # Left subplot 
+    plt.subplot(1, 2, 1)
+    plt.plot(np.arange(24), hour_power[0, :], color='red', label='Total daily energy\nproduction = '+str(np.sum(daytime_flag[0, :])*max_power/1e9)+' GWh')
+    plt.title('a) Summer solstice power production')
+    plt.ylabel('Power [MW]')
+    plt.xlabel('Solar hour [no unit]')
+    plt.legend(loc='center left', fontsize=9)
+
+    # Right subplot
+    plt.subplot(1, 2, 2)
+    plt.plot(np.arange(24), hour_power[-1, :], color='blue', label='Total daily energy\nproduction = '+str(np.sum(daytime_flag[-1, :])*max_power/1e9)+' GWh')
+    plt.title('b) Winter solstice power production')
+    plt.ylabel('Power [MW]')
+    plt.xlabel('Solar hour [no unit]')
+    plt.legend(loc='center left', fontsize=9)
+    plt.tight_layout()
+
+    # Save figure
+    plt.savefig('Fig3_daily_prod_LTB_simple_model.png')

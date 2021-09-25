@@ -13,7 +13,6 @@ May 2021, v0 by Rodrigo Guzman
 """
 
 import numpy as np
-import numpy.ma as ma
 
 import constants as cst
 import variables as var
@@ -192,8 +191,10 @@ if __name__ == "__main__":
     ########################################
     
     # Ploting Atmospheric and LTB profiles
-    func.plot_profiles(pres, alt, nb_cube_mod, temp, d_mod, d_mod_cone)
+    func.plot_profiles(pres, alt, nb_cube_mod, temp, d_mod, d_mod_cone, nb_cube_tower)
 
     # Ploting surface shadows caused by the LTB
     func.plot_shadows(var.lat, var.lon, var.n_days, var.x_pv, var.y_pv, var.z_tower)
     
+    # Ploting idealized daily production for the 2 solstices
+    func.plot_daily_prod(var.lat, var.lon, var.n_days, max_power)
