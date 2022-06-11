@@ -129,6 +129,33 @@ def mass_from_ideal_gas(pres, vol, mol_mass, temp):
     return mass
 
 
+def module_mass(dens_surf_mod, z_mod, d_mod):
+    """Function to compute the mass of a cylindrical module.
+
+    Parameters
+    ----------   
+    dens_surf_mod : float
+        Module surface density used as a "volume density", in [kg/m^2].
+
+    z_mod : float
+        Module altitude considering z_mod_margin, in [m].
+
+    d_mod : float
+        Module diameter, in [m]
+
+    Returns
+    -------
+    mass_mod : float
+        Total mass of the cylindrical module considered.
+
+    """
+
+    # Mass derived from the module variables
+    mass_mod = dens_surf_mod*z_mod*d_mod*np.pi
+
+    return mass_mod
+
+
 def plot_profiles(pres, alt, nb_cube_mod, temp, d_mod, d_mod_cone, nb_cube_tower):
     """Function to plot the atmospheric and LTB profiles.
 

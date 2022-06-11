@@ -54,7 +54,7 @@ if __name__ == "__main__":
    
     # Number of casings per module (vertical profile), initialized with
     # 1 casing per module 
-    nb_cube_mod = np.ones(nb_mod)
+    nb_cube_mod = np.ones(nb_mod, dtype=int)
     # Initializing number of casings per module side
     nb_cube_mod_per_side = 1
     # Diameter of each module (vertical profile), initialized with the
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     # Computing each module features from surface to top of the tower
     for i in np.arange(nb_mod):
         # Computing mass of the module
-        mass_mod[i] = var.dens_surf_mod*var.z_mod*d_mod[i]*np.pi
+        mass_mod[i] = func.module_mass(var.dens_surf_mod, var.z_mod, d_mod[i])
         # Computing maximum gas volume allowed within the module
         max_vol_mod[i] = var.max_vol_cube*(1-var.max_vol_margin/100.)*nb_cube_mod[i]
         # Air mass associated to max_vol_mod 
@@ -94,7 +94,7 @@ if __name__ == "__main__":
             # H2 mass associated to max_vol_mod 
             mass_h2_mod[i] = func.mass_from_ideal_gas(pres[i], max_vol_mod[i], cst.mol_mass_h2, temp[i])
             # Computing updated mass of the module
-            mass_mod[i] = var.dens_surf_mod*var.z_mod*d_mod[i]*np.pi
+            mass_mod[i] = func.module_mass(var.dens_surf_mod, var.z_mod, d_mod[i])
         # Updating the number of casings needed for the modules above
         nb_cube_mod[i:] = nb_cube_mod[i]
         # Updating the minimum module diameter for the modules above
@@ -112,7 +112,9 @@ if __name__ == "__main__":
     d_mod_min = d_mod[0]
     d_grad = (d_mod_max-d_mod_min)/nb_mod
     d_mod_cone = np.arange(nb_mod)*d_grad + d_mod_min
-    
+    # Mass of the lightest and heaviest modules
+    mass_mod_max = mass_mod[-1]
+    mass_mod_min = mass_mod[0]
 
 
 ######################################################################
@@ -183,6 +185,10 @@ if __name__ == "__main__":
     print('nb_cube_tower + nb_cube_pv = '+str(nb_cube_tower)+' + '+str(var.nb_cube_pv)+' =')
     print('total_nb_cube_structure = '+str(var.nb_cube_pv+nb_cube_tower))
     print('total_nb_mod_tower = '+str(nb_mod))
+    print('Lowest module features:')
+    print('mass_mod_min = '+str(np.round(mass_mod_min/1000.))+' [ton], d_mod_min = '+str(np.round(d_mod_min))+' [m], nb_cube_mod = '+str(nb_cube_mod[0]))
+    print('Highest module features:')
+    print('mass_mod_max = '+str(np.round(mass_mod_max/1000.))+' [ton], d_mod_max = '+str(np.round(d_mod_max))+' [m], nb_cube_mod = '+str(nb_cube_mod[-1]))
     print('\n***********\n')    
     print('Main production output variables:')
     print('max_power = '+str(max_power/1e6)+' [MW]')
