@@ -24,12 +24,14 @@ if __name__ == "__main__":
 
     """
 
-    ######################################################################
-    # I - Atmosphere variables derived from variables.py and function.py #
-    ######################################################################
 
-    # Number of modules needed to build the tower, also corresponds to the
-    # number of elements for the vertically extended (profile) variables 
+######################################################################
+# I - Atmosphere variables derived from variables.py and function.py #
+######################################################################
+
+    # Number of modules needed to build the tower, also corresponds
+    # to the number of elements for the vertically extended (profile)
+    # variables 
     nb_mod = int(var.z_tower/var.z_mod)
 
     # Initializaing the atmosphere variables profiles (nb_mod elements)
@@ -46,8 +48,7 @@ if __name__ == "__main__":
     pres = func.compute_pres(pres, var.surf_pres, alt, var.surf_alt, var.temp_grad, var.surf_temp)
 
     ######################################################################
-    ##  II - Tower variables derived from variables.py and function.py  ##
-    ######################################################################
+##  II - Tower variables derived from variables.py and function.py  ## ######################################################################
     
     # > < : ces signes ne marchent pas sur mon clavier...
    
@@ -71,7 +72,7 @@ if __name__ == "__main__":
     # Computing each module features from surface to top of the tower
     for i in np.arange(nb_mod):
         # Computing mass of the module
-        mass_mod[i] = var.dens_surf_mod*var.z_mod*d_mod[i]
+        mass_mod[i] = var.dens_surf_mod*var.z_mod*d_mod[i]*np.pi
         # Computing maximum gas volume allowed within the module
         max_vol_mod[i] = var.max_vol_cube*(1-var.max_vol_margin/100.)*nb_cube_mod[i]
         # Air mass associated to max_vol_mod 
@@ -92,8 +93,8 @@ if __name__ == "__main__":
             mass_air_mod[i] = func.mass_from_ideal_gas(pres[i], max_vol_mod[i], cst.mol_mass_air, temp[i])
             # H2 mass associated to max_vol_mod 
             mass_h2_mod[i] = func.mass_from_ideal_gas(pres[i], max_vol_mod[i], cst.mol_mass_h2, temp[i])
-            # Computing mass of the module
-            mass_mod[i] = var.dens_surf_mod*var.z_mod*d_mod[i]
+            # Computing updated mass of the module
+            mass_mod[i] = var.dens_surf_mod*var.z_mod*d_mod[i]*np.pi
         # Updating the number of casings needed for the modules above
         nb_cube_mod[i:] = nb_cube_mod[i]
         # Updating the minimum module diameter for the modules above
@@ -113,9 +114,10 @@ if __name__ == "__main__":
     d_mod_cone = np.arange(nb_mod)*d_grad + d_mod_min
     
 
-    ######################################################################
-    # III - PV panel variables derived from variables.py and function.py #
-    ######################################################################
+
+######################################################################
+# III - PV panel variables derived from variables.py and function.py #
+######################################################################
 
     # Maximum gas volume within the cubic casings attached to the PV panel,
     # with the max_vol_margin safety margin
@@ -129,10 +131,11 @@ if __name__ == "__main__":
     # Maximum surface density of the PV panel
     max_dens_pv = max_mass_pv/var.surf_pv
 
-    
-    ######################################################################
-    #####  IV - Total structure features derived from results above  #####
-    ######################################################################
+
+
+######################################################################
+#####  IV - Total structure features derived from results above  #####
+######################################################################
 
     # Computing total structure mass
     total_mass_structure = max_mass_tower + max_mass_pv
@@ -142,10 +145,11 @@ if __name__ == "__main__":
     # and the total mass of the structure
     total_mass_ratio = total_mass_h2/total_mass_structure
 
+
     
-    #######################################################################
-    ## V - Electricity production calculations derived from variables.py ##
-    #######################################################################
+#####################################################################
+# V - Electricity production calculations derived from variables.py #
+#####################################################################
 
     # Computing maximum power produced by the structure
     max_power = var.surf_pv*cst.S_flux*(var.conv_rate_pv/100.)
@@ -155,9 +159,9 @@ if __name__ == "__main__":
     year_energy_prod = day_energy_prod*365
 
     
-    #######################################################################
-    #########  VI - Displaying main results from the simulation  ##########
-    #######################################################################
+#######################################################################
+#########  VI - Displaying main results from the simulation  ##########
+#######################################################################
 
     print('\n*** Main results from this simulation ***\n')
     print('Main input variables:')
@@ -186,9 +190,9 @@ if __name__ == "__main__":
     print('year_energy_prod = '+str(year_energy_prod/1e12)+' [TWh/year]\n')   
 
 
-    ########################################
-    ############  VII - Plots  #############
-    ########################################
+########################################
+############  VII - Plots  #############
+########################################
     
     # Ploting Atmospheric and LTB profiles
     func.plot_profiles(pres, alt, nb_cube_mod, temp, d_mod, d_mod_cone, nb_cube_tower)

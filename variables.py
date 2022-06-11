@@ -80,7 +80,7 @@ z_tower = 15000.
 # for the equivalent of a solid angle having à 1 m^2 surface at
 # the edge of the tower section.
 # This makes the mass of each module proportional to its radius.
-dens_surf_mod = 20.
+dens_surf_mod = 10.
 
 # Part 4, PV panel at the top of the tower
 # Length, this dimension always stays horizontal
@@ -118,9 +118,9 @@ min_d_tower = x_cube*np.sqrt(2)*(1+x_cube_margin/100.)
 # Total surface of the PV panel
 surf_pv = x_pv*y_pv
 # Number of cubic casings attached the PV panel, x dimension
-nb_cube_x_pv = int(x_pv/(x_cube*np.sqrt(2)*(1+x_cube_margin/100.)))
+nb_cube_x_pv = int(x_pv/(x_cube*(1+x_cube_margin/100.)))
 # Number of cubic casings attached to the PV panel, y dimension
-nb_cube_y_pv = int(y_pv/(x_cube*(1+x_cube_margin/100.)))
+nb_cube_y_pv = int(y_pv/(x_cube*np.sqrt(2)*(1+x_cube_margin/100.)))
 # Total number of cubic casings attached to the PV panel
 nb_cube_pv = nb_cube_x_pv*nb_cube_y_pv
 # Maximum distance between the center of the PV panel
@@ -128,3 +128,4 @@ nb_cube_pv = nb_cube_x_pv*nb_cube_y_pv
 max_r_pv = np.sqrt(x_pv**2+y_pv**2)/2
 # Maximum horizontal speed for the corners of the PV panel
 max_speed_pv = 2.*np.pi*max_r_pv/(60*60*24)
+
