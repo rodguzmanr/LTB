@@ -203,6 +203,9 @@ if __name__ == "__main__":
     # Ploting Atmospheric and LTB profiles
     func.plot_profiles(pres, alt, nb_cube_mod, temp, d_mod, d_mod_cone, nb_cube_tower)
 
+    # Ploting LTB sections (bottom, middle and top)
+    func.plot_sections(alt, nb_cube_mod, d_mod, var.x_cube, var.x_cube_margin)
+
     # Ploting surface shadows caused by the LTB
     func.plot_shadows(var.lat, var.lon, var.n_days, var.x_pv, var.y_pv, var.z_tower)
     
