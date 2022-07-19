@@ -126,6 +126,7 @@ nb_cube_pv = nb_cube_x_pv*nb_cube_y_pv
 # Maximum distance between the center of the PV panel
 # and the corners of it
 max_r_pv = np.sqrt(x_pv**2+y_pv**2)/2
-# Maximum horizontal speed for the corners of the PV panel
-max_speed_pv = 2.*np.pi*max_r_pv/(60*60*24)
+# Minimum horizontal speed of the corners of the PV panel
+# in order to keep the average pace of the sun in the sky
+min_speed_pv = 2.*np.pi*max_r_pv/(60*60*24)
 

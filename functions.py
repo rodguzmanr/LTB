@@ -247,35 +247,36 @@ def plot_sections(alt, nb_cube_mod, d_mod, x_cube, x_cube_margin):
 
     # Three sections will be plotted: top, middle and bottom of the LTB
     top, mid, bot = -1, int(len(alt)/2), 0
+    # Information needed for the figure
     sub_letter = ["a", "b", "c"]
     sub_position = ["Top", "Middle", "Bottom"]
+    # The features of the three sections are selected
     radius_mod = [d_mod[top]/2, d_mod[mid]/2, d_mod[bot]/2]
     cubes_per_mod = [nb_cube_mod[top], nb_cube_mod[mid], nb_cube_mod[bot]]
     alt_mod = [int(alt[top]), int(alt[mid]), int(alt[bot])]
-#    section_levs = [0, int(len(alt)/2), -1]
-#    n_levs = len(section_levs)
     
-    fig, axes = plt.subplots(3, 1, figsize=(6, 14))
-    plt.suptitle('Figure 2: Sections (modules) of the LTB\n', fontsize=14)
+    # Three subplots figure
+    fig, axes = plt.subplots(3, 1, figsize=(5, 14))
+    plt.suptitle('Figure 2: Three sections (modules) of the LTB\n', fontsize=14)
     
+    # For each module plotted
     for k in np.arange(3):
     
-    # Top subplot
-#    ax.subplots(3, 1, 3)
-#    ax = fig.gca()
+        # Drawing the circle representing the module
     	module = plt.Circle((0, 0), radius_mod[k], fill=False)
     	axes[k].add_patch(module)
     	# Distance between the center of the module and the center of the
-    	# most distant casing
+    	# most distant cubic casing
     	c1 = radius_mod[k] - x_cube*np.sqrt(2)*(1+x_cube_margin/100)/2
-    	# Compute initial position within the circle to draw the casings    
+    	# Compute initial position within the circle to draw all the casings    
     	x_c1_ll = -(np.sqrt(2)*c1/2 + x_cube/2)
     	y_c1_ll = -(np.sqrt(2)*c1/2 + x_cube/2)
-    	# From that position, we draw all the casings within the module
-    	for i in np.arange(int(np.sqrt(cubes_per_mod[k]))):
-    	    for j in np.arange(int(np.sqrt(cubes_per_mod[k]))):
-            	casing = plt.Rectangle((x_c1_ll+i*x_cube*(1+x_cube_margin/100), y_c1_ll+j*x_cube*(1+x_cube_margin/100)), x_cube, x_cube, facecolor="grey", alpha=0.6)
+    	# From this position, we draw all the casings within the module
+    	for i in np.arange(np.sqrt(cubes_per_mod[k])):
+    	    for j in np.arange(np.sqrt(cubes_per_mod[k])):
+            	casing = plt.Rectangle((x_c1_ll+i*x_cube*(1+x_cube_margin/100), y_c1_ll+j*x_cube*(1+x_cube_margin/100)), x_cube, x_cube, facecolor="grey", alpha=0.5)
             	axes[k].add_patch(casing)
+        # Subplot text
     	axes[k].set_title(sub_letter[k]+') '+sub_position[k]+' module, altitude = '+str(alt_mod[k])+' m')
     	axes[k].set_xlim((-radius_mod[0], radius_mod[0]))
     	axes[k].set_ylim((-radius_mod[0], radius_mod[0]))
@@ -285,7 +286,7 @@ def plot_sections(alt, nb_cube_mod, d_mod, x_cube, x_cube_margin):
     plt.tight_layout()
     
     # Save figure
-    plt.savefig('Fig4_LTB_sections.png')
+    plt.savefig('Fig2_sections_LTB_simple_model.png')
 
 
 def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
@@ -325,7 +326,7 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
     
     # Creating figure
     fig, ax = plt.subplots(figsize=(6, 6))
-    plt.suptitle('Figure 2: Surface shadows in the surrounding LTB area\ncaused by the PV panel array in clear-sky conditions', fontsize=14)
+    plt.suptitle('Figure 3: Surface shadows in the surrounding LTB area\ncaused by the PV panel array in clear-sky conditions', fontsize=14)
     
     # Loop over the number of days in n_days
     for i in np.arange(len(n_days)):
@@ -408,7 +409,7 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
     plt.tight_layout()
     
     # Save figure
-    plt.savefig('Fig2_shadows_LTB_simple_model.png')
+    plt.savefig('Fig3_shadows_LTB_simple_model.png')
 
 
 def plot_daily_prod(lat, lon, n_days, max_power):
@@ -450,7 +451,7 @@ def plot_daily_prod(lat, lon, n_days, max_power):
     hour_power = daytime_flag*max_power/1e6
 
     fig = plt.figure(figsize=(8, 4))
-    plt.suptitle('Figure 3: Maximum and minimum daily energy production, lat = '+str(lat)+' N', fontsize=14)
+    plt.suptitle('Figure 4: Maximum and minimum daily energy production, lat = '+str(lat)+' N', fontsize=14)
 
     # Left subplot 
     plt.subplot(1, 2, 1)
@@ -470,4 +471,4 @@ def plot_daily_prod(lat, lon, n_days, max_power):
     plt.tight_layout()
 
     # Save figure
-    plt.savefig('Fig3_daily_prod_LTB_simple_model.png')
+    plt.savefig('Fig4_daily_prod_LTB_simple_model.png')
