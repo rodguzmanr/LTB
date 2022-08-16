@@ -386,9 +386,9 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
 
     # Filling the shadow zone only when abs(lat) less than 66 deg
     if np.abs(lat) < 66:
-        ax.fill_between(x_box_centers[0, :], y_box_centers[0, :], np.ones(len(x_box_centers[0,:]))*max_val*lat_sign, color="grey", alpha=0.6, label="Yearly surface\nshadow zone")
+        ax.fill_between(x_box_centers[0, :], y_box_centers[0, :], np.ones(len(x_box_centers[0,:]))*max_val, color="grey", alpha=0.6, label="Yearly surface\nshadow zone")
         # Limiting the shadow zone polewards
-        ax.fill_between(x_box_centers[-1, :], y_box_centers[-1, :], np.ones(len(x_box_centers[-1,:]))*max_val*lat_sign, color="white", alpha=1)
+        ax.fill_between(x_box_centers[-1, :], y_box_centers[-1, :], np.ones(len(x_box_centers[-1,:]))*max_val, color="white", alpha=1)
     # LTB position at the ground
     ax.scatter(np.zeros(1), np.zeros(1), color='red', marker=".", label='LTB', lw=0.2)
     
@@ -402,7 +402,10 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
 
     # Orthonormal axes
     plt.xlim(-50000,50000)
-    plt.ylim(-40000,60000)
+    if lat_sign < 0:
+    	plt.ylim(-60000,40000)
+    else:
+    	plt.ylim(-40000,60000)
     plt.xlabel("Eastward distance with respect to LTB [m]")
     plt.ylabel("Northward distance with respect to LTB [m]")
     plt.legend(fontsize=8)

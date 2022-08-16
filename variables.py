@@ -42,7 +42,7 @@ surf_alt = 0.
 
 # Location
 # Latitude where the LTB is located, in [degrees North]
-lat = 40.
+lat = 50.
 # Longitude where the LTB is located, in [degrees East]
 lon = 100.
 # Days of interest to plot the daily shadows at the surface,
@@ -58,7 +58,7 @@ n_days = ['20200621','20200921','20201221']
 # Part 1, the cubic casing
 # All cubic casing have the same shape and dimensions
 # Length [m]
-x_cube = 20.
+x_cube = 20
 # Safety distance between cubic casings and the rest of the structure,
 # in percent with respect to length considered [%]
 x_cube_margin = 10.
@@ -75,19 +75,19 @@ z_mod_margin = 25.
 # Part 3, the tower
 # Height of the tower, from the surface elevation
 # to the tropopause (lower stratosphere), in [m]
-z_tower = 15000.
+z_tower = 15000
 # Surface density in [kg/m^2], corresponding to a "volume density"
 # for the equivalent of a solid angle having à 1 m^2 surface at
 # the edge of the tower section.
 # This makes the mass of each module proportional to its radius.
-dens_surf_mod = 5.
+dens_surf_mod = 5
 
 # Part 4, PV panel at the top of the tower
 # Length, this dimension always stays horizontal
-x_pv = 2000.
+x_pv = 2000
 # Width, this dimension will go from horizontal to vertical
 # on a daily basis once deployed
-y_pv = 500.
+y_pv = 500
 # Effective conversion rate of solar radiative flux to electricity, in [%]
 conv_rate_pv = 20.
 # Average hours per day of full exposure of the PV panel to solar flux
