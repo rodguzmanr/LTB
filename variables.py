@@ -36,7 +36,7 @@ min_temp = 200.
 # Temperature in [K]
 surf_temp = 290.
 # Pressure in [Pa]
-surf_pres = 102000.
+surf_pres = 101000.
 # Surface elevation in [m] above the sea level
 surf_alt = 0.
 
@@ -80,7 +80,7 @@ z_tower = 15000.
 # for the equivalent of a solid angle having à 1 m^2 surface at
 # the edge of the tower section.
 # This makes the mass of each module proportional to its radius.
-dens_surf_mod = 10.
+dens_surf_mod = 5.
 
 # Part 4, PV panel at the top of the tower
 # Length, this dimension always stays horizontal

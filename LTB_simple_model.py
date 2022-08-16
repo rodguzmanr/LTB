@@ -32,7 +32,7 @@ if __name__ == "__main__":
     # Number of modules needed to build the tower, also corresponds
     # to the number of elements for the vertically extended (profile)
     # variables 
-    nb_mod = int(var.z_tower/var.z_mod)
+    nb_mod = int((var.z_tower-var.surf_alt)/var.z_mod)
 
     # Initializaing the atmosphere variables profiles (nb_mod elements)
     # Temperature profile
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     # Pressure
     pres = func.compute_pres(pres, var.surf_pres, alt, var.surf_alt, var.temp_grad, var.surf_temp)
 
-    ######################################################################
+######################################################################
 ##  II - Tower variables derived from variables.py and function.py  ## ######################################################################
     
     # > < : ces signes ne marchent pas sur mon clavier...
@@ -58,15 +58,15 @@ if __name__ == "__main__":
     # Initializing number of casings per module side
     nb_cube_mod_per_side = 1
     # Diameter of each module (vertical profile), initialized with the
-    # smallest diameter allowed by x_cube and x_cube_margin
+    # smallest diameter allowed by x_cube and x_cube_margin, in [m]
     d_mod = np.ones(nb_mod)*var.min_d_tower
     # Mass of each module (vertical profile), in [kg]
     mass_mod = np.zeros(nb_mod)
-    # Mass of each module (vertical profile), in [kg]
+    # Max H2 volume allowed within each module (vertical profile), in [m^3]
     max_vol_mod = np.zeros(nb_mod)
     # Mass of the air volume displaced for each module (vertical profile), in [kg]
     mass_air_mod = np.zeros(nb_mod)
-    # Mass of the h2 volume needed for each module (vertical profile), in [kg]
+    # Mass of the H2 volume needed for each module (vertical profile), in [kg]
     mass_h2_mod = np.zeros(nb_mod)
 
     # Computing each module features from surface to top of the tower
@@ -101,7 +101,7 @@ if __name__ == "__main__":
         d_mod[i:] = d_mod[i]
 
     # Computing total number of casings within the tower
-    nb_cube_tower = int(np.sum(nb_cube_mod))
+    nb_cube_tower = np.sum(nb_cube_mod)
     # Total mass of the tower
     max_mass_tower = np.sum(mass_mod)
     # Total h2 mass needed to lift the tower
