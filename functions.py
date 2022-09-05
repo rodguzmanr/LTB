@@ -314,9 +314,14 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
 
     """
     
-    # Defining coordinate matrices for the days to be plotted
+    # Defining coordinate tables for the days to be plotted
     x_box_centers = np.ones((len(n_days),24))*np.nan
     y_box_centers = np.ones((len(n_days),24))*np.nan
+    x_box_lls = np.ones((len(n_days),24))*np.nan
+    y_box_lls = np.ones((len(n_days),24))*np.nan
+    x_shadows = np.ones((len(n_days),24))*np.nan
+    y_shadows = np.ones((len(n_days),24))*np.nan
+    saas = np.ones((len(n_days),24))*np.nan
     # Maximum value for plots
     max_val = 999999
     # Defining variable to switch from one hemisphere to the other
@@ -362,34 +367,47 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
                 x_box_ll = x_box_center + (x_shadow/2.)*(np.cos((2*np.pi/360.)*saa)) + (y_shadow/2.)*(np.sin((2*np.pi/360.)*saa))
                 y_box_ll = y_box_center + (x_shadow/2.)*(-np.sin((2*np.pi/360.)*saa)) + (y_shadow/2.)*(np.cos((2*np.pi/360.)*saa))
 
-                # We save the box center coordinates to plot
-                # each day's surface shadow trajectory
+                # We save the box coordinates to plot the shadows
+                # created by the PV panel array at the ground
                 if k == 0:
                     x_box_centers[i, :] = x_box_center
                     y_box_centers[i, :] = y_box_center
+                    x_box_lls[i, :] = x_box_ll
+                    y_box_lls[i, :] = y_box_ll
+                    x_shadows[i, :] = x_shadow
+                    y_shadows[i, :] = y_shadow
+                    saas[i, :] = saa
                     k = 1
                 else:
                     x_box_centers[i, j:] = x_box_center
                     y_box_centers[i, j:] = y_box_center
-
-                if i==0 and k==1:
-                    rect = plt.Rectangle((x_box_ll, y_box_ll), x_shadow, y_shadow, angle=(180-saa), facecolor="black", alpha=0.8, label="Instantaneous hourly\nsurface shadows")
-                    ax.add_patch(rect)
-                    k = 2
-                else:
-                    rect = plt.Rectangle((x_box_ll, y_box_ll), x_shadow, y_shadow, angle=(180-saa), facecolor="black", alpha=0.8)
-                    ax.add_patch(rect)
+                    x_box_lls[i, j:] = x_box_ll
+                    y_box_lls[i, j:] = y_box_ll
+                    x_shadows[i, j:] = x_shadow
+                    y_shadows[i, j:] = y_shadow
+                    saas[i, j:] = saa
 
     # Plotting each day's surface shadow trajectory
     for i in np.arange(len(n_days)):
         ax.plot(x_box_centers[i, :], y_box_centers[i, :], label=n_days[i], lw=0.6)
 
-    # Filling the shadow zone only when abs(lat) less than 66 deg
+    # Filling the yearly shadow zone only when abs(lat) less than 66 deg
     if np.abs(lat) < 66:
         ax.fill_between(x_box_centers[0, :], y_box_centers[0, :], np.ones(len(x_box_centers[0,:]))*max_val, color="grey", alpha=0.6, label="Yearly surface\nshadow zone")
-        # Limiting the shadow zone polewards
+        # Limiting the shadow zone northwards
         ax.fill_between(x_box_centers[-1, :], y_box_centers[-1, :], np.ones(len(x_box_centers[-1,:]))*max_val, color="white", alpha=1)
-    # LTB position at the ground
+        
+    # Plotting hourly shadows
+    for i in np.arange(len(n_days)):
+        for j in np.arange(24):
+            if i==0 and j==0:
+                rect = plt.Rectangle((x_box_lls[i, j], y_box_lls[i, j]), x_shadows[i, j], y_shadows[i, j], angle=(180-saas[i, j]), facecolor="black", alpha=0.8, label="Instantaneous hourly\nsurface shadows")
+                ax.add_patch(rect)
+            else:
+                rect = plt.Rectangle((x_box_lls[i, j], y_box_lls[i, j]), x_shadows[i, j], y_shadows[i, j], angle=(180-saas[i, j]), facecolor="black", alpha=0.8)
+                ax.add_patch(rect)
+	    
+    # Plotting LTB position at the ground
     ax.scatter(np.zeros(1), np.zeros(1), color='red', marker=".", label='LTB', lw=0.2)
     
     # Reference surface at the ground
