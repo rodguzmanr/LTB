@@ -185,37 +185,37 @@ def plot_profiles(pres, alt, nb_cube_mod, temp, d_mod, d_mod_cone, nb_cube_tower
     """
 
     fig = plt.figure(figsize=(8, 6))
-    plt.suptitle('Figure 1: Idealized atmosphere and LTB profiles', fontsize=14)
+    plt.suptitle('Figure 1: Atmosphère idéale et profils LTB', fontsize=14)
     
     # Top left subplot 
     plt.subplot(2, 2, 1)
     plt.plot(pres, alt, color='blue')
-    plt.title('a) Atmospheric pressure')
+    plt.title('a) Pression atmosphérique')
     plt.ylabel('Altitude [m]')
-    plt.xlabel('Pressure [Pa]')
+    plt.xlabel('Pression [Pa]')
 
     # Top right subplot 
     plt.subplot(2, 2, 2)
     plt.plot(nb_cube_mod, alt, color='black')
-    plt.title('b) Number of casings per module')
-    plt.text(nb_cube_mod[-1]*0.5, alt[0]+1000, 'Total number of\ncasings within the\ntower : '+str(nb_cube_tower), fontsize=10)
+    plt.title("b) Nombre d'enveloppes par module")
+    plt.text(nb_cube_mod[-1]*0.5, alt[0]+1000, "Nombre total\nd'enveloppes dans\nla tour : "+str(nb_cube_tower), fontsize=10)
     plt.ylabel('Altitude [m]')
-    plt.xlabel('Nb casings [no unit]')
+    plt.xlabel("Nb enveloppes [pas d'unité]")
     
     # Bottom left subplot
     plt.subplot(2, 2, 3)
     plt.plot(temp, alt, color='red')
-    plt.title('c) Atmospheric temperature')
+    plt.title('c) Température atmosphérique')
     plt.ylabel('Altitude [m]')
-    plt.xlabel('Temperature [K]')
+    plt.xlabel('Température [K]')
 
     # Bottom right subplot 
     plt.subplot(2, 2, 4)
-    plt.plot(d_mod, alt, color='black', label='cylindrical modules tower')
-    plt.plot(d_mod_cone, alt, color='green', label='conical tower')
-    plt.title('d) Tower diameter')
+    plt.plot(d_mod, alt, color='black', label='tour avec des\nmodules cylindriques')
+    plt.plot(d_mod_cone, alt, color='green', label='tour conique')
+    plt.title('d) Diamètre de la tour')
     plt.ylabel('Altitude [m]')
-    plt.xlabel('Diameter [m]')
+    plt.xlabel('Diamètre [m]')
     plt.legend(fontsize=9)
     plt.tight_layout()
     
@@ -249,7 +249,7 @@ def plot_sections(alt, nb_cube_mod, d_mod, x_cube, x_cube_margin):
     top, mid, bot = -1, int(len(alt)/2), 0
     # Information needed for the figure
     sub_letter = ["a", "b", "c"]
-    sub_position = ["Top", "Middle", "Bottom"]
+    sub_position = ["sommet", "milieu", "surface"]
     # The features of the three sections are selected
     radius_mod = [d_mod[top]/2, d_mod[mid]/2, d_mod[bot]/2]
     cubes_per_mod = [nb_cube_mod[top], nb_cube_mod[mid], nb_cube_mod[bot]]
@@ -257,7 +257,7 @@ def plot_sections(alt, nb_cube_mod, d_mod, x_cube, x_cube_margin):
     
     # Three subplots figure
     fig, axes = plt.subplots(3, 1, figsize=(5, 14))
-    plt.suptitle('Figure 2: Three sections (modules) of the LTB\n', fontsize=14)
+    plt.suptitle('Figure 2: Trois sections (modules) de LTB\n', fontsize=14)
     
     # For each module plotted
     for k in np.arange(3):
@@ -277,7 +277,7 @@ def plot_sections(alt, nb_cube_mod, d_mod, x_cube, x_cube_margin):
             	casing = plt.Rectangle((x_c1_ll+i*x_cube*(1+x_cube_margin/100), y_c1_ll+j*x_cube*(1+x_cube_margin/100)), x_cube, x_cube, facecolor="grey", alpha=0.5)
             	axes[k].add_patch(casing)
         # Subplot text
-    	axes[k].set_title(sub_letter[k]+') '+sub_position[k]+' module, altitude = '+str(alt_mod[k])+' m')
+    	axes[k].set_title(sub_letter[k]+') Module '+sub_position[k]+', altitude = '+str(alt_mod[k])+' m')
     	axes[k].set_xlim((-radius_mod[0], radius_mod[0]))
     	axes[k].set_ylim((-radius_mod[0], radius_mod[0]))
     	axes[k].set_ylabel('Distance [m]')
@@ -331,7 +331,7 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
     
     # Creating figure
     fig, ax = plt.subplots(figsize=(6, 6))
-    plt.suptitle('Figure 3: Surface shadows in the surrounding LTB area\ncaused by the PV panel array in clear-sky conditions', fontsize=14)
+    plt.suptitle('Figure 3: Ombres au sol dans la zone de déploiement de\nLTB dues au plan de panneaux PV en conditions de ciel clair', fontsize=14)
     
     # Loop over the number of days in n_days
     for i in np.arange(len(n_days)):
@@ -393,7 +393,7 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
 
     # Filling the yearly shadow zone only when abs(lat) less than 66 deg
     if np.abs(lat) < 66:
-        ax.fill_between(x_box_centers[0, :], y_box_centers[0, :], np.ones(len(x_box_centers[0,:]))*max_val, color="grey", alpha=0.6, label="Yearly surface\nshadow zone")
+        ax.fill_between(x_box_centers[0, :], y_box_centers[0, :], np.ones(len(x_box_centers[0,:]))*max_val, color="grey", alpha=0.6, label="Zone d'ombre\nau sol annuelle")
         # Limiting the shadow zone northwards
         ax.fill_between(x_box_centers[-1, :], y_box_centers[-1, :], np.ones(len(x_box_centers[-1,:]))*max_val, color="white", alpha=1)
         
@@ -401,7 +401,7 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
     for i in np.arange(len(n_days)):
         for j in np.arange(24):
             if i==0 and j==0:
-                rect = plt.Rectangle((x_box_lls[i, j], y_box_lls[i, j]), x_shadows[i, j], y_shadows[i, j], angle=(180-saas[i, j]), facecolor="black", alpha=0.8, label="Instantaneous hourly\nsurface shadows")
+                rect = plt.Rectangle((x_box_lls[i, j], y_box_lls[i, j]), x_shadows[i, j], y_shadows[i, j], angle=(180-saas[i, j]), facecolor="black", alpha=0.8, label="Zone d'ombre au sol\ninstantanée par heure")
                 ax.add_patch(rect)
             else:
                 rect = plt.Rectangle((x_box_lls[i, j], y_box_lls[i, j]), x_shadows[i, j], y_shadows[i, j], angle=(180-saas[i, j]), facecolor="black", alpha=0.8)
@@ -424,8 +424,8 @@ def plot_shadows(lat, lon, n_days, x_pv, y_pv, z_tower):
     	plt.ylim(-60000,40000)
     else:
     	plt.ylim(-40000,60000)
-    plt.xlabel("Eastward distance with respect to LTB [m]")
-    plt.ylabel("Northward distance with respect to LTB [m]")
+    plt.xlabel("Distance vers l'est par rapport à LTB [m]")
+    plt.ylabel("Distance vers le nord par rapport à LTB [m]")
     plt.legend(fontsize=8)
     plt.tight_layout()
     
@@ -472,22 +472,22 @@ def plot_daily_prod(lat, lon, n_days, max_power):
     hour_power = daytime_flag*max_power/1e6
 
     fig = plt.figure(figsize=(8, 4))
-    plt.suptitle('Figure 4: Maximum and minimum daily energy production, lat = '+str(lat)+' N', fontsize=14)
+    plt.suptitle('Figure 4: Production énergétique journalière maximale et minimale, lat = '+str(lat)+' N', fontsize=14)
 
     # Left subplot 
     plt.subplot(1, 2, 1)
-    plt.plot(np.arange(24), hour_power[0, :], color='red', label='Total daily energy\nproduction = '+str(np.sum(daytime_flag[0, :])*max_power/1e9)+' GWh')
-    plt.title('a) Summer solstice power production')
-    plt.ylabel('Power [MW]')
-    plt.xlabel('Solar hour [no unit]')
+    plt.plot(np.arange(24), hour_power[0, :], color='red', label="Production totale \nd'énergie journalière = "+str(np.sum(daytime_flag[0, :])*max_power/1e9)+' GWh')
+    plt.title("a) Puissance produite au solstice d'été")
+    plt.ylabel('Puissance [MW]')
+    plt.xlabel('Heure solaire [h]')
     plt.legend(loc='center left', fontsize=9)
 
     # Right subplot
     plt.subplot(1, 2, 2)
-    plt.plot(np.arange(24), hour_power[-1, :], color='blue', label='Total daily energy\nproduction = '+str(np.sum(daytime_flag[-1, :])*max_power/1e9)+' GWh')
-    plt.title('b) Winter solstice power production')
-    plt.ylabel('Power [MW]')
-    plt.xlabel('Solar hour [no unit]')
+    plt.plot(np.arange(24), hour_power[-1, :], color='blue', label="Production totale \nd'énergie journalière = "+str(np.sum(daytime_flag[-1, :])*max_power/1e9)+' GWh')
+    plt.title("b) Puissance produite au solstice d'hiver")
+    plt.ylabel('Puissance [MW]')
+    plt.xlabel('Heure solaire [h]')
     plt.legend(loc='center left', fontsize=9)
     plt.tight_layout()
 
